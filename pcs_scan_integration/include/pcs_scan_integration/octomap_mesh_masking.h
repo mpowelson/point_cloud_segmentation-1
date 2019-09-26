@@ -38,7 +38,7 @@ TESSERACT_COMMON_IGNORE_WARNINGS_POP
 
 namespace pcs_scan_integration
 {
-  /**
+/**
  * @brief colorPassthrough
  * @param input_cloud
  * @param lower_limit
@@ -102,10 +102,7 @@ public:
    * @brief Sets the Tesseract_Geometry octree that will be used to mask the mesh directly
    * @param octree Octree to be used to mask the mesh. No filtering is applied internally.
    */
-  void setOctree(const tesseract_geometry::Octree::Ptr& octree)
-  {
-    octree_ = std::move(octree);
-  }
+  void setOctree(const tesseract_geometry::Octree::Ptr& octree) { octree_ = std::move(octree); }
 
   /**
    * @brief Returns the octree that will be used to mask the mesh

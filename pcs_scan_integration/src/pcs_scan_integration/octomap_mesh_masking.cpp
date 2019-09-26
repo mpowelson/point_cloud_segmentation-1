@@ -4,6 +4,7 @@ TESSERACT_COMMON_IGNORE_WARNINGS_PUSH
 #include <pcl/filters/passthrough.h>
 #include "tesseract_collision/bullet/bullet_discrete_simple_manager.h"
 #include "tesseract_collision/core/common.h"
+#include <tesseract_geometry/mesh_parser.h>
 TESSERACT_COMMON_IGNORE_WARNINGS_POP
 
 #include <pcs_scan_integration/octomap_mesh_masking.h>
@@ -94,8 +95,9 @@ pcs_scan_integration::colorPassthrough(const pcl::PointCloud<pcl::PointXYZRGB>::
 
 void OctomapMeshMask::setInputMesh(std::string& filepath)
 {
-  // TODO
-  CONSOLE_BRIDGE_logError("setInputMesh from a filepath is not implemented yet.");
+  tesseract_geometry::Mesh::Ptr mesh =
+      tesseract_geometry::createMeshFromPath<tesseract_geometry::Mesh>(filepath, Eigen::Vector3d(1, 1, 1), true)[0];
+  setInputMesh(mesh);
 }
 
 void OctomapMeshMask::setOctree(const pcl::PointCloud<pcl::PointXYZRGB>::Ptr point_cloud,

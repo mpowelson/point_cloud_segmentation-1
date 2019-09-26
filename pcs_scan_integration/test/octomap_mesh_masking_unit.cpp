@@ -53,72 +53,41 @@ TEST_F(OctomapMeshMaskUnit, getSet)
   EXPECT_TRUE(masker.getMaskedMesh() == nullptr);
 
   // Get/Set Octomap
-  auto octree = std::make_shared<tesseract_geometry::Octree>(*cloud, 0.1, tesseract_geometry::Octree::SubType::BOX, true);
-  masker.setOctree(octree);
-  EXPECT_TRUE(masker.getOctree() != nullptr);
-  masker.setOctree(nullptr);
-  masker.setOctree(cloud, 0.1);
-  EXPECT_TRUE(masker.getOctree() != nullptr);
-
+  {
+    auto octree =
+        std::make_shared<tesseract_geometry::Octree>(*cloud, 0.1, tesseract_geometry::Octree::SubType::BOX, true);
+    masker.setOctree(octree);
+    EXPECT_TRUE(masker.getOctree() != nullptr);
+    masker.setOctree(nullptr);
+    masker.setOctree(cloud, 0.1);
+    EXPECT_TRUE(masker.getOctree() != nullptr);
+  }
+  // Set Octree from Point Cloud
+  {
+    masker.setOctree(nullptr);
+    masker.setOctree(cloud, 0.1, 0, 255, false);
+    tesseract_geometry::Octree::ConstPtr octree = masker.getOctree();
+    // Since this function is mostly just calling the Tesseract constructor, we can mostly rely on the Tesseract unit
+    // tests
+    EXPECT_TRUE(octree != nullptr);
+  }
   // Get/Set Mesh
-  // TODO
-//  masker.setInputMesh();
-
-
-
-}
-
-TEST_F(OctomapMeshMaskUnit, setOctreeFromPointCloud)
-{
   {
-    const bool limit_neg = false;
-    // Loop over various options for limits
-    for (int lower_lim = 0; lower_lim < 255; lower_lim += 25)
-    {
-      for (int upper_lim = lower_lim; upper_lim < 255; upper_lim += 25)
-      {
-        // Apply color filter
-        auto result_cloud = pcs_scan_integration::colorPassthrough(cloud, lower_lim, upper_lim, limit_neg);
-        // Check that the color filter is obeyed
-        EXPECT_EQ(result_cloud->size(), upper_lim - lower_lim - (upper_lim == lower_lim ? 0 : 1));
-        for (const pcl::PointXYZRGB& point : result_cloud->points)
-        {
-          EXPECT_LT(point.r, upper_lim);
-          EXPECT_LT(point.g, upper_lim);
-          EXPECT_LT(point.b, upper_lim);
-          EXPECT_GT(point.r, lower_lim);
-          EXPECT_GT(point.g, lower_lim);
-          EXPECT_GT(point.b, lower_lim);
-        }
-      }
-    }
+    std::string path = std::string(DATA_DIR) + "/plane_4m.stl";
+    masker.setInputMesh(path);
+    auto input_mesh = masker.getInputMesh();
+    EXPECT_EQ(input_mesh->getVertices()->size(), 6273);
+    EXPECT_EQ(input_mesh->getTriangles()->size(), 12288 * 4);
   }
   {
-    const bool limit_neg = true;
-    // Loop over various options for limits
-    for (int lower_lim = 0; lower_lim < 255; lower_lim += 25)
-    {
-      for (int upper_lim = lower_lim; upper_lim < 255; upper_lim += 25)
-      {
-        // Apply color filter
-        auto result_cloud = pcs_scan_integration::colorPassthrough(cloud, lower_lim, upper_lim, limit_neg);
-        // Check that the color filter is obeyed
-        EXPECT_EQ(result_cloud->size(), cloud->size() - (upper_lim - lower_lim) - 1);
-        for (const pcl::PointXYZRGB& point : result_cloud->points)
-        {
-          EXPECT_FALSE(((point.r > lower_lim) && (point.r < upper_lim)));
-          EXPECT_FALSE(((point.g > lower_lim) && (point.g < upper_lim)));
-          EXPECT_FALSE(((point.b > lower_lim) && (point.b < upper_lim)));
-        }
-      }
-    }
+    std::string path = std::string(DATA_DIR) + "/box_2m.ply";
+    tesseract_geometry::Mesh::Ptr mesh =
+        tesseract_geometry::createMeshFromPath<tesseract_geometry::Mesh>(path, Eigen::Vector3d(1, 1, 1), true)[0];
+    masker.setInputMesh(mesh);
+    auto input_mesh = masker.getInputMesh();
+    EXPECT_EQ(input_mesh->getVertices()->size(), 8);
+    EXPECT_EQ(input_mesh->getTriangles()->size(), 12 * 4);
   }
-  OctomapMeshMask masker;
-  masker.setOctree(cloud, 0.1, 0, 255, false);
-  tesseract_geometry::Octree::ConstPtr octree = masker.getOctree();
-  // Since this function is mostly just calling the Tesseract constructor, we can mostly rely on the Tesseract unit
-  // tests
-  EXPECT_TRUE(octree != nullptr);
 }
 
 TEST_F(OctomapMeshMaskUnit, maskMesh)
@@ -138,18 +107,21 @@ TEST_F(OctomapMeshMaskUnit, maskMesh)
     std::string output_path = std::string(DATA_DIR) + "/results/test_output_RETURN_COLORIZED.ply";
     EXPECT_TRUE(masker.saveMaskedMesh(output_path));
     CONSOLE_BRIDGE_logDebug("Saving file to data directory");
+    tesseract_geometry::Mesh::Ptr results = masker.getMaskedMesh();
+    EXPECT_EQ(results->getVertices()->size(), 6273);
+    EXPECT_EQ(results->getTriangles()->size(), 12288 * 4);
   }
   {
     EXPECT_TRUE(masker.maskMesh(OctomapMeshMask::MaskType::RETURN_INSIDE));
     std::string output_path = std::string(DATA_DIR) + "/results/test_output_RETURN_INSIDE.ply";
+    EXPECT_TRUE(masker.saveMaskedMesh(output_path));
+    CONSOLE_BRIDGE_logDebug("Saving file to data directory");
     tesseract_geometry::Mesh::Ptr results = masker.getMaskedMesh();
-    masker.saveMaskedMesh(output_path);
+    EXPECT_EQ(results->getVertices()->size(), 5928);
+    EXPECT_EQ(results->getTriangles()->size(), 1976 * 4);
   }
 
   EXPECT_FALSE(masker.maskMesh(OctomapMeshMask::MaskType::RETURN_OUTSIDE));
-
-
-
 }
 
 int main(int argc, char** argv)
