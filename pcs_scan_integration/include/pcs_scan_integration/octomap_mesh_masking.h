@@ -28,8 +28,6 @@
 
 #include <tesseract_common/macros.h>
 TESSERACT_COMMON_IGNORE_WARNINGS_PUSH
-#include <memory>
-
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
 TESSERACT_COMMON_IGNORE_WARNINGS_POP
@@ -39,21 +37,31 @@ TESSERACT_COMMON_IGNORE_WARNINGS_POP
 namespace pcs_scan_integration
 {
 /**
- * @brief colorPassthrough
- * @param input_cloud
- * @param lower_limit
- * @param upper_limit
- * @param limit_negative
- * @return
+ * @brief colorPassthrough Filter for PCL Pointcloud that filters based on color. Similar to Passthrough filter
+ *
+ * This currently applies one filter to all 3 channels and all 3 channels must satisfy it to be included. ie if r and g
+ * are inside the threshold but b is outside, then the point is considered outside
+ * @param input_cloud ConstPtr to input cloud
+ * @param lower_limit All RGB values must be > limit to be included in output
+ * @param upper_limit All RGB values must be < limit to be included in output
+ * @param limit_negative If true return the data outside of the threshold rather than inside it
+ * @return Ptr to filtered cloud where
  */
 pcl::PointCloud<pcl::PointXYZRGB>::Ptr colorPassthrough(const pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr input_cloud,
                                                         const int& lower_limit,
                                                         const int& upper_limit,
-                                                        const bool& limit_negative);
+                                                        const bool& limit_negative = false);
 
 class OctomapMeshMask
 {
 public:
+  /**
+   * @brief Used to determine the method used for masking
+   *
+   * RETURN_INSIDE - Returns only the mesh inside the masking
+   * RETURN_OUTSIDE - Returns only the mesh outside the masking
+   * RETURN_COLORIZED - Returns the entire mesh but colorizes it based on what is inside/outside the masking
+   */
   enum class MaskType
   {
     RETURN_INSIDE,

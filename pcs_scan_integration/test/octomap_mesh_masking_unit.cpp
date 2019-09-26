@@ -11,11 +11,6 @@ TESSERACT_COMMON_IGNORE_WARNINGS_POP
 
 using namespace pcs_scan_integration;
 
-class OctomapMeshMaskTest : public OctomapMeshMask
-{
-public:
-};
-
 class OctomapMeshMaskUnit : public ::testing::Test
 {
 protected:
@@ -88,6 +83,54 @@ TEST_F(OctomapMeshMaskUnit, getSet)
     EXPECT_EQ(input_mesh->getVertices()->size(), 8);
     EXPECT_EQ(input_mesh->getTriangles()->size(), 12 * 4);
   }
+}
+
+TEST_F(OctomapMeshMaskUnit, colorPassthrough)
+{
+  {
+      const bool limit_neg = false;
+      // Loop over various options for limits
+      for (int lower_lim = 0; lower_lim < 255; lower_lim += 25)
+      {
+        for (int upper_lim = lower_lim; upper_lim < 255; upper_lim += 25)
+        {
+          // Apply color filter
+          auto result_cloud = pcs_scan_integration::colorPassthrough(cloud, lower_lim, upper_lim, limit_neg);
+          // Check that the color filter is obeyed
+          EXPECT_EQ(result_cloud->size(), upper_lim - lower_lim - (upper_lim == lower_lim ? 0 : 1));
+          for (const pcl::PointXYZRGB& point : result_cloud->points)
+          {
+            EXPECT_LT(point.r, upper_lim);
+            EXPECT_LT(point.g, upper_lim);
+            EXPECT_LT(point.b, upper_lim);
+            EXPECT_GT(point.r, lower_lim);
+            EXPECT_GT(point.g, lower_lim);
+            EXPECT_GT(point.b, lower_lim);
+          }
+        }
+      }
+    }
+    {
+      const bool limit_neg = true;
+      // Loop over various options for limits
+      for (int lower_lim = 0; lower_lim < 255; lower_lim += 25)
+      {
+        for (int upper_lim = lower_lim; upper_lim < 255; upper_lim += 25)
+        {
+          // Apply color filter
+          auto result_cloud = pcs_scan_integration::colorPassthrough(cloud, lower_lim, upper_lim, limit_neg);
+          // Check that the color filter is obeyed
+          EXPECT_EQ(result_cloud->size(), cloud->size() - (upper_lim - lower_lim) - 1);
+          for (const pcl::PointXYZRGB& point : result_cloud->points)
+          {
+            EXPECT_FALSE(((point.r > lower_lim) && (point.r < upper_lim)));
+            EXPECT_FALSE(((point.g > lower_lim) && (point.g < upper_lim)));
+            EXPECT_FALSE(((point.b > lower_lim) && (point.b < upper_lim)));
+          }
+        }
+      }
+    }
+
 }
 
 TEST_F(OctomapMeshMaskUnit, maskMesh)

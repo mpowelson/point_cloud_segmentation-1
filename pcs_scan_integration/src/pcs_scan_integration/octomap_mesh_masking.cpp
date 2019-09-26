@@ -2,12 +2,12 @@
 TESSERACT_COMMON_IGNORE_WARNINGS_PUSH
 #include <console_bridge/console.h>
 #include <pcl/filters/passthrough.h>
-#include "tesseract_collision/bullet/bullet_discrete_simple_manager.h"
-#include "tesseract_collision/core/common.h"
+#include <tesseract_collision/bullet/bullet_discrete_simple_manager.h>
+#include <tesseract_collision/core/common.h>
 #include <tesseract_geometry/mesh_parser.h>
 TESSERACT_COMMON_IGNORE_WARNINGS_POP
 
-#include <pcs_scan_integration/octomap_mesh_masking.h>
+#include "pcs_scan_integration/octomap_mesh_masking.h"
 
 using namespace pcs_scan_integration;
 
