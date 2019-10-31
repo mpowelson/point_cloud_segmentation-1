@@ -101,15 +101,41 @@ install(FILES
 export(EXPORT ${PROJECT_NAME}-targets
     FILE ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-targets.cmake)
 
+
+
 #############
 ## Test ##
 #############
 if (ENABLE_TESTS)
+  set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules)
+  if(ENABLE_COVERAGE_TESTING)
+    include(CodeCoverage)
+    APPEND_COVERAGE_COMPILER_FLAGS()
+  endif()
+
   enable_testing()
   add_custom_target(run_tests ALL
       WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
       COMMAND ${CMAKE_CTEST_COMMAND} -V -O "/tmp/${PROJECT_NAME}_ctest.log" -C ${CONFIGURATION})
+#    add_custom_target(run_tests ALL
+#        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+#        )
 
   add_subdirectory(test)
+
+
+###################
+## Code Coverage ##
+###################
+
+
+
+  if(ENABLE_COVERAGE_TESTING)
+#      set(COVERAGE_EXCLUDES "*/${PROJECT_NAME}/test*")
+      SETUP_TARGET_FOR_COVERAGE_LCOV(NAME ${PROJECT_NAME}_coverage
+                                     EXECUTABLE ${PROJECT_NAME}_point_cloud_annotator -j 4
+                                     )
+
+  endif() #ENABLE_COVERAGE_TESTING
 endif()
 
