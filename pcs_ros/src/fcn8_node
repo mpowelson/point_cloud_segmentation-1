@@ -89,7 +89,7 @@ class InferenceServer(object):
         input_image = np.asarray(cv_image)
 
         # Generate the annotation and convert to 3 channel image
-        res = self.annotator.make_prediction(input_image[:,:,0])
+        res = self.annotator.make_prediction(input_image[:,:,:])
 
         results_image = cv.merge((res, res, res)) * 255
 
