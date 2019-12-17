@@ -67,6 +67,10 @@ add_executable(${PROJECT_NAME}_point_cloud_passthrough_node src/utility_nodes/po
 add_dependencies(${PROJECT_NAME}_point_cloud_passthrough_node ${catkin_EXPORTED_TARGETS})
 target_link_libraries(${PROJECT_NAME}_point_cloud_passthrough_node ${catkin_LIBRARIES} pcs::pcs_scan_integration_octomap_mesh_masking)
 
+add_executable(${PROJECT_NAME}_point_cloud_edge_trim_node src/utility_nodes/point_cloud_edge_trim_node.cpp)
+add_dependencies(${PROJECT_NAME}_point_cloud_edge_trim_node ${catkin_EXPORTED_TARGETS})
+target_link_libraries(${PROJECT_NAME}_point_cloud_edge_trim_node ${catkin_LIBRARIES})
+
 add_executable(${PROJECT_NAME}_point_cloud_xyzi_to_xyzrgb_node src/point_cloud_xyzi_to_xyzrgb_node.cpp)
 add_dependencies(${PROJECT_NAME}_point_cloud_xyzi_to_xyzrgb_node ${catkin_EXPORTED_TARGETS})
 target_link_libraries(${PROJECT_NAME}_point_cloud_xyzi_to_xyzrgb_node ${catkin_LIBRARIES})
