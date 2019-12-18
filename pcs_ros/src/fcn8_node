@@ -91,6 +91,8 @@ class InferenceServer(object):
         # Generate the annotation and convert to 3 channel image
         if self.config.CHANNEL == "GREY":
           res = self.annotator.make_prediction(input_image[:,:,0])
+        elif self.config.CHANNEL == "STACKED":
+          res = self.annotator.make_prediction(input_image[:,:,0])
         else:
           res = self.annotator.make_prediction(input_image[:,:,:])
 
