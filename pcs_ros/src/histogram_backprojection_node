@@ -15,11 +15,15 @@ class HistogramBackprojectionServer(object):
     """
     service = None
 
-    def __init__(self, filepath):
+    def __init__(self, filepath, invert_results = False):
         """
         Constructor takes an input filepath to the .npy file
         containing the histogram
+
+        If invert_results = True, positive detections will be black instead of white
         """
+        self.invert_results = invert_results
+
         self.histogram_backprojection = HistogramBackprojection(filepath)
         self.service = rospy.Service('perform_detection', ImageProcessing, self.annotateImage)
 
@@ -36,6 +40,10 @@ class HistogramBackprojectionServer(object):
 
         # Convert to numpy array and send to annotator
         results = self.histogram_backprojection.annotate_image(np.asarray(cv_image))
+        results = results.astype(np.uint8)
+
+        if self.invert_results:
+          results = 255 - results
 
         # Convert results back into sensor_msgs/Image
         res_msg = self.bridge.cv2_to_imgmsg(results, "8UC3")
@@ -48,8 +56,9 @@ if __name__ == '__main__':
     rospy.init_node('histogram_backprojection_node')
 
     filepath = rospy.get_param('~filepath')
+    invert_results = rospy.get_param('~invert_results', True)
 
     # Launch server
-    server = HistogramBackprojectionServer(filepath)
+    server = HistogramBackprojectionServer(filepath, True)
 
     rospy.spin()
