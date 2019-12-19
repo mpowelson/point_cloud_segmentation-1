@@ -108,7 +108,7 @@ class Inference():
 
         # practical min max normalization 
         # values will depend on application 
-        max_range = 5
+        max_range = 0.5
         prediction += max_range / 2
         prediction /= max_range
 
@@ -116,7 +116,7 @@ class Inference():
         val_prediction = np.max(prediction,axis=-1)
 
         # probability is based off of the difference between the max class and background
-        val_prediction -= np.max(prediction[:,:,[0,-1]], axis=-1)
+        val_prediction -= np.max(prediction[:,:,[0]], axis=-1)
 
         # clip any abnormally strong predicitons 
         val_prediction[val_prediction > 1] = 1

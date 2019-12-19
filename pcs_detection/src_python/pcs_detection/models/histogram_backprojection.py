@@ -30,15 +30,15 @@ class HistogramBackprojection:
         dst = cv.calcBackProject([hsv_image], [0, 1], self.histogram, [0, 180, 0, 255], 1)
 
         # Now convolute with circular disc
-        disc = cv.getStructuringElement(cv.MORPH_ELLIPSE, (5, 5))
+        disc = cv.getStructuringElement(cv.MORPH_ELLIPSE, (25, 25))
         cv.filter2D(dst,-1, disc, dst)
 
         # Apply treshold based on limits
         _, thresholded = cv.threshold(dst, self.threshold_min, self.threshold_max, 0)
 
         # Apply erosion and dilation to clean up noise
-        kernel = np.ones((5, 5), np.uint8)
-        cleaned = cv.morphologyEx(thresholded, cv.MORPH_OPEN, kernel)
+        kernel = np.ones((25, 25), np.uint8)
+        cleaned = cv.morphologyEx(thresholded, cv.MORPH_CLOSE, kernel)
 
         # Normalize to 0 - 1
         cv.normalize(cleaned, cleaned, 0, 1, cv.NORM_MINMAX, cv.CV_8UC3)

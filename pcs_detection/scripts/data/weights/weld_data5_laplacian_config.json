@@ -1,0 +1,48 @@
+{
+    "CLASS_NAMES": [
+        "weld"
+    ],
+    "BATCH_SIZE": 8,
+    "ORIG_DIMS": [
+        480,
+        640
+    ],
+    "MODEL": "fcn8",
+    "VAL_WEIGHT_PATH": "/home/ros-industrial/workspaces/hybrid_perception/src/point_cloud_segmentation/pcs_detection/scripts/data/weights/weld_data5_laplacian.h5",
+    "DISPLAY_SCALE_FACTOR": 1.25,
+    "CONFIDENCE_THRESHOLD": 0.2,
+    "PRE_PROCESS": {
+        "grey": [
+            117
+        ],
+        "rgb": [
+            127.11864,
+            120.26283,
+            116.5
+        ],
+        "edge": [
+            0,
+            3
+        ],
+        "lab": [
+            50,
+            0.1,
+            1.5
+        ],
+        "ycr": [
+            123,
+            126,
+            120
+        ],
+        "clahe": [
+            117
+        ],
+        "hsv": [
+            80,
+            0.1,
+            90
+        ]
+    },
+    "CHANNEL": "STACKED",
+    "MODE": "VALIDATE"
+}
