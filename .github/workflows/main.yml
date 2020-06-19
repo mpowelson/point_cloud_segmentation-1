@@ -14,27 +14,6 @@ jobs:
       fail-fast: false
       matrix:
         env:
-          - {CI_NAME: Clang-Format,
-             OS_NAME: ubuntu,
-             OS_CODE_NAME: bionic,
-             ROS_DISTRO: melodic,
-             ROS_REPO: main,
-             ROSDEP_SKIP_KEYS: "bullet3 fcl",
-             CLANG_FORMAT_CHECK: file,
-             CLANG_FORMAT_VERSION: 8}
-          - {CI_NAME: Focal-Build,
-             OS_NAME: ubuntu,
-             OS_CODE_NAME: focal,
-             ROS_DISTRO: noetic,
-             ROS_REPO: main,
-             UPSTREAM_WORKSPACE: 'dependencies.rosinstall',
-             ADDITIONAL_DEBS: 'libompl-dev',
-             ROSDEP_SKIP_KEYS: "bullet3 fcl ompl orocos_kdl python-numpy ifopt python descartes_opw descartes_samplers descartes_light opw_kinematics",
-             CCACHE_DIR: "/home/runner/work/pcs/pcs/Focal-Build/.ccache",
-             PARALLEL_TESTS: false,
-             BEFORE_RUN_TARGET_TEST_EMBED: "source /root/target_ws/install/setup.bash",
-             UPSTREAM_CMAKE_ARGS: "-DCMAKE_BUILD_TYPE=Release",
-             TARGET_CMAKE_ARGS: "-DCMAKE_BUILD_TYPE=Debug -DENABLE_TESTS=ON"}
           - {CI_NAME: Bionic-Build,
              OS_NAME: ubuntu,
              OS_CODE_NAME: bionic,
@@ -46,14 +25,7 @@ jobs:
              PARALLEL_TESTS: false,
              UPSTREAM_CMAKE_ARGS: "-DCMAKE_BUILD_TYPE=Release",
              TARGET_CMAKE_ARGS: "-DCMAKE_BUILD_TYPE=Debug -DENABLE_TESTS=ON"}
-          - {CI_NAME: Xenial-Build,
-             OS_NAME: ubuntu,
-             OS_CODE_NAME: xenial,
-             ROS_DISTRO: kinetic,
-             ROS_REPO: main,
-             UPSTREAM_WORKSPACE: 'dependencies.rosinstall',
-             ROSDEP_SKIP_KEYS: "bullet3 fcl benchmark",
-             AFTER_SCRIPT: 'catkin build -w $target_ws --no-deps --verbose pcs_detection pcs_ros pcs_scan_integration --make-args test'}
+
 
     steps:
       - uses: actions/checkout@v1
