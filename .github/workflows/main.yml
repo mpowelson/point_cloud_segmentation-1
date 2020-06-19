@@ -28,6 +28,7 @@ jobs:
              ROS_DISTRO: noetic,
              ROS_REPO: main,
              UPSTREAM_WORKSPACE: 'dependencies.rosinstall',
+             ADDITIONAL_DEBS: 'libompl-dev',
              ROSDEP_SKIP_KEYS: "bullet3 fcl ompl orocos_kdl python-numpy ifopt python descartes_opw descartes_samplers descartes_light opw_kinematics",
              CCACHE_DIR: "/home/runner/work/pcs/pcs/Focal-Build/.ccache",
              PARALLEL_TESTS: false,
