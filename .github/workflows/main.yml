@@ -42,7 +42,7 @@ jobs:
              ROS_REPO: main,
              UPSTREAM_WORKSPACE: 'dependencies.rosinstall',
              ROSDEP_SKIP_KEYS: "bullet3 fcl",
-             CCACHE_DIR: "/home/runner/work/tesseract/tesseract/Bionic-Build/.ccache",
+             CCACHE_DIR: "/home/runner/work/pcs/pcs/Bionic-Build/.ccache",
              PARALLEL_TESTS: false,
              UPSTREAM_CMAKE_ARGS: "-DCMAKE_BUILD_TYPE=Release",
              TARGET_CMAKE_ARGS: "-DCMAKE_BUILD_TYPE=Debug -DENABLE_TESTS=ON"}
@@ -81,5 +81,5 @@ jobs:
           restore-keys: |
             ${{ matrix.env.CI_NAME }}-ccache-
 
-      - uses: 'ros-industrial/industrial_ci@master'
+      - uses: 'ros-industrial/industrial_ci@master_transitional'
         env: ${{matrix.env}}
