@@ -35,6 +35,30 @@ jobs:
              BEFORE_RUN_TARGET_TEST_EMBED: "source /root/target_ws/install/setup.bash",
              UPSTREAM_CMAKE_ARGS: "-DCMAKE_BUILD_TYPE=Release",
              TARGET_CMAKE_ARGS: "-DCMAKE_BUILD_TYPE=Debug -DENABLE_TESTS=ON"}
+          - {CI_NAME: Bionic-Build,
+             OS_NAME: ubuntu,
+             OS_CODE_NAME: bionic,
+             ROS_DISTRO: melodic,
+             ROS_REPO: main,
+             UPSTREAM_WORKSPACE: 'dependencies.rosinstall',
+             ROSDEP_SKIP_KEYS: "bullet3 fcl",
+             CCACHE_DIR: "/home/runner/work/tesseract/tesseract/Bionic-Build/.ccache",
+             PARALLEL_TESTS: false,
+             UPSTREAM_CMAKE_ARGS: "-DCMAKE_BUILD_TYPE=Release",
+             TARGET_CMAKE_ARGS: "-DCMAKE_BUILD_TYPE=Debug -DENABLE_TESTS=ON",
+             AFTER_SCRIPT: 'catkin build -w $target_ws --no-deps --verbose pcs_detection pcs_ros pcs_scan_integration --make-args test'}
+          - {CI_NAME: Xenial-Build,
+             OS_NAME: ubuntu,
+             OS_CODE_NAME: xenial,
+             ROS_DISTRO: kinetic,
+             ROS_REPO: main,
+             UPSTREAM_WORKSPACE: 'dependencies.rosinstall',
+             ROSDEP_SKIP_KEYS: "bullet3 fcl benchmark",
+             CCACHE_DIR: "/home/runner/work/tesseract/tesseract/Xenial-Build/.ccache",
+             PARALLEL_TESTS: false,
+             UPSTREAM_CMAKE_ARGS: "-DCMAKE_BUILD_TYPE=Release",
+             TARGET_CMAKE_ARGS: "-DCMAKE_BUILD_TYPE=Debug -DENABLE_TESTS=ON",
+             AFTER_SCRIPT: 'catkin build -w $target_ws --no-deps --verbose pcs_detection pcs_ros pcs_scan_integration --make-args test'}
 
     steps:
       - uses: actions/checkout@v1
